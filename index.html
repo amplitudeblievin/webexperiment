@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>totaljobs — Set up your job search</title>
+  <title>totaljobs — Find the right job, faster</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,700&display=swap" rel="stylesheet">
 
   <!-- Amplitude Browser SDK 2 -->
   <script src="https://cdn.amplitude.com/script/e3ba67e2674d5fabbdcbd8f2cddcbf2a.js"></script>
@@ -14,274 +14,302 @@
 
   <style>
     :root {
-      --teal-primary: #006672;
+      --navy:         #0d1b4b;
+      --teal:         #006672;
       --teal-hover:   #004d57;
       --teal-light:   #e6f4f6;
-      --teal-mid:     #cce8eb;
-      --text-primary: #222222;
-      --text-secondary: #585858;
-      --text-muted:   #767676;
       --border:       #d4d4d4;
       --border-light: #e8e8e8;
-      --bg-page:      #f5f5f5;
-      --bg-white:     #ffffff;
-      --shadow-modal: 0 4px 24px rgba(0,0,0,0.18);
-      --radius-btn:   24px;
-      --radius-card:  8px;
+      --text-body:    #333;
+      --text-muted:   #666;
+      --bg-page:      #ffffff;
+      --bg-right-card:#f0f3f8;
+      --radius-pill:  24px;
+      --radius-card:  12px;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      font-size: 16px;
-      color: var(--text-primary);
       background: var(--bg-page);
+      color: var(--navy);
       min-height: 100vh;
     }
 
     /* ── NAV ── */
     .nav {
-      background: var(--bg-white);
-      border-bottom: 1px solid var(--border-light);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-    .nav-inner {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 24px;
-      height: 64px;
       display: flex;
       align-items: center;
-      gap: 32px;
+      padding: 0 32px;
+      height: 60px;
+      background: #fff;
+      border-bottom: 1px solid var(--border-light);
     }
     .nav-logo {
-      font-size: 22px;
-      font-weight: 700;
-      color: var(--teal-primary);
+      display: flex;
+      align-items: center;
+      gap: 8px;
       text-decoration: none;
-      letter-spacing: -0.5px;
+      margin-right: 32px;
+    }
+    /* Logo icon — approximates the TotalJobs blue cookie/star icon */
+    .logo-icon {
+      width: 34px;
+      height: 34px;
       flex-shrink: 0;
     }
-    .nav-logo span { color: var(--text-primary); }
+    .nav-logo-text {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--navy);
+      letter-spacing: -0.3px;
+    }
     .nav-links {
       display: flex;
-      gap: 24px;
+      gap: 0;
       list-style: none;
       flex: 1;
     }
     .nav-links a {
-      text-decoration: none;
-      color: var(--text-secondary);
-      font-size: 14px;
-      font-weight: 500;
-      transition: color .15s;
-    }
-    .nav-links a:hover { color: var(--teal-primary); }
-    .nav-actions { display: flex; gap: 12px; align-items: center; }
-    .btn-nav-ghost {
-      background: none;
-      border: 1.5px solid var(--teal-primary);
-      color: var(--teal-primary);
-      border-radius: var(--radius-btn);
-      padding: 8px 20px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background .15s, color .15s;
-    }
-    .btn-nav-ghost:hover { background: var(--teal-light); }
-    .btn-nav-solid {
-      background: var(--teal-primary);
-      border: 1.5px solid var(--teal-primary);
-      color: #fff;
-      border-radius: var(--radius-btn);
-      padding: 8px 20px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background .15s;
-    }
-    .btn-nav-solid:hover { background: var(--teal-hover); }
-
-    /* ── PROGRESS BAR ── */
-    .progress-wrap {
-      background: var(--bg-white);
-      border-bottom: 1px solid var(--border-light);
-    }
-    .progress-inner {
-      max-width: 680px;
-      margin: 0 auto;
-      padding: 20px 24px 0;
-    }
-    .progress-steps {
-      display: flex;
-      align-items: center;
-      gap: 0;
-      margin-bottom: 20px;
-    }
-    .step {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      flex: 1;
-      position: relative;
-    }
-    .step:not(:last-child)::after {
-      content: '';
-      position: absolute;
-      top: 14px;
-      left: 50%;
-      width: 100%;
-      height: 2px;
-      background: var(--border);
-    }
-    .step.active:not(:last-child)::after,
-    .step.done:not(:last-child)::after { background: var(--teal-primary); }
-    .step-circle {
-      width: 28px; height: 28px;
-      border-radius: 50%;
-      background: var(--border);
-      color: var(--text-muted);
-      font-size: 12px;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      z-index: 1;
-    }
-    .step.active .step-circle { background: var(--teal-primary); color: #fff; }
-    .step.done .step-circle { background: var(--teal-primary); color: #fff; }
-    .step-label {
-      font-size: 11px;
-      color: var(--text-muted);
-      font-weight: 500;
-      white-space: nowrap;
-    }
-    .step.active .step-label { color: var(--teal-primary); font-weight: 600; }
-
-    /* ── MAIN CONTENT ── */
-    .main {
-      max-width: 680px;
-      margin: 40px auto;
-      padding: 0 24px;
-    }
-    .card {
-      background: var(--bg-white);
-      border-radius: var(--radius-card);
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-      padding: 40px;
-    }
-    .card-eyebrow {
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--teal-primary);
-      text-transform: uppercase;
-      letter-spacing: 0.6px;
-      margin-bottom: 10px;
-    }
-    .card-title {
-      font-size: 26px;
-      font-weight: 700;
-      color: var(--text-primary);
-      margin-bottom: 8px;
-      line-height: 1.25;
-    }
-    .card-subtitle {
-      font-size: 15px;
-      color: var(--text-secondary);
-      margin-bottom: 32px;
-      line-height: 1.5;
-    }
-
-    /* form */
-    .form-group { margin-bottom: 20px; }
-    .form-label {
       display: block;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-primary);
-      margin-bottom: 6px;
-    }
-    .form-control {
-      width: 100%;
-      padding: 12px 16px;
-      border: 1.5px solid var(--border);
-      border-radius: 6px;
+      padding: 0 16px;
+      line-height: 60px;
       font-size: 15px;
-      font-family: inherit;
-      color: var(--text-primary);
-      outline: none;
-      transition: border-color .15s;
-      background: var(--bg-white);
-    }
-    .form-control:focus { border-color: var(--teal-primary); }
-    .form-control::placeholder { color: var(--text-muted); }
-    .form-hint {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-top: 4px;
-    }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
-    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-    .chip {
-      padding: 6px 14px;
-      border-radius: 20px;
-      border: 1.5px solid var(--border);
-      font-size: 13px;
-      cursor: pointer;
-      transition: all .15s;
-      background: var(--bg-white);
-      color: var(--text-secondary);
-    }
-    .chip:hover, .chip.selected {
-      border-color: var(--teal-primary);
-      background: var(--teal-light);
-      color: var(--teal-primary);
       font-weight: 500;
+      color: var(--navy);
+      text-decoration: none;
+      border-bottom: 2px solid transparent;
+      transition: border-color .15s;
     }
-
-    .btn-continue {
-      width: 100%;
-      padding: 14px;
-      background: var(--teal-primary);
+    .nav-links a:hover { border-bottom-color: var(--navy); }
+    .btn-signup {
+      background: var(--teal);
       color: #fff;
       border: none;
-      border-radius: var(--radius-btn);
-      font-size: 16px;
+      border-radius: var(--radius-pill);
+      padding: 10px 24px;
+      font-size: 15px;
       font-weight: 600;
       cursor: pointer;
-      margin-top: 8px;
+      font-family: inherit;
       transition: background .15s;
     }
-    .btn-continue:hover { background: var(--teal-hover); }
-    .btn-skip {
-      display: block;
-      text-align: center;
-      margin-top: 14px;
-      font-size: 14px;
-      color: var(--text-muted);
-      cursor: pointer;
-      text-decoration: underline;
-    }
-    .btn-skip:hover { color: var(--teal-primary); }
+    .btn-signup:hover { background: var(--teal-hover); }
 
-    .trust-strip {
+    /* ── PAGE BODY ── */
+    .page-body {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 28px 32px 60px;
+    }
+
+    /* stat line */
+    .stat-line {
+      font-size: 14px;
+      color: var(--text-body);
+      margin-bottom: 16px;
+    }
+    .stat-line strong {
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    /* main heading */
+    .hero-heading {
+      font-size: clamp(38px, 5vw, 58px);
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1.12;
+      margin-bottom: 28px;
+      letter-spacing: -1px;
+    }
+    .hero-heading em {
+      font-style: italic;
+      font-weight: 700;
+    }
+
+    /* two-col grid */
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 420px;
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    /* ── LEFT: gradient card ── */
+    .gradient-card {
+      background: linear-gradient(135deg, #4dcece 0%, #70d4c8 30%, #e8a898 75%, #f0a090 100%);
+      border-radius: var(--radius-card);
+      padding: 32px 32px 28px;
+      display: flex;
+      flex-direction: column;
+      min-height: 340px;
+      position: relative;
+      overflow: hidden;
+    }
+    .gradient-card-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 10px;
+      line-height: 1.2;
+    }
+    .gradient-card-sub {
+      font-size: 15px;
+      color: var(--navy);
+      opacity: 0.85;
+      max-width: 480px;
+      line-height: 1.5;
+    }
+    .gradient-card-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: auto;
+      padding-top: 32px;
+      justify-content: flex-end;
+    }
+    .btn-upload-cv {
+      background: var(--navy);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-pill);
+      padding: 12px 26px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: opacity .15s;
+    }
+    .btn-upload-cv:hover { opacity: 0.85; }
+    .btn-login {
+      background: #fff;
+      color: var(--navy);
+      border: 2px solid var(--navy);
+      border-radius: var(--radius-pill);
+      padding: 12px 26px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background .15s;
+    }
+    .btn-login:hover { background: rgba(255,255,255,0.85); }
+
+    /* ── RIGHT: search card ── */
+    .search-card {
+      background: var(--bg-right-card);
+      border-radius: var(--radius-card);
+      padding: 24px 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    /* spinner */
+    .spinner {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 3px solid #dde3ef;
+      border-top-color: var(--teal);
+      animation: spin 0.9s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .search-card-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--navy);
+      line-height: 1.35;
+    }
+    .search-textarea {
+      width: 100%;
+      flex: 1;
+      min-height: 160px;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: 15px;
+      color: var(--navy);
+      resize: none;
+      outline: none;
+    }
+    .search-textarea::placeholder { color: #8899b8; }
+    .search-card-footer {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .btn-next {
+      background: #c8d0e0;
+      color: #8899b8;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 22px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: default;
+      font-family: inherit;
+    }
+    .suggestions-section { border-top: 1px solid #dde3ef; padding-top: 14px; }
+    .suggestions-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .suggestions-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+    .suggestion-chip {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 7px 14px;
+      border-radius: var(--radius-pill);
+      border: 1.5px solid #c8d0e0;
+      background: #fff;
+      font-size: 13px;
+      color: var(--navy);
+      cursor: pointer;
+      font-weight: 500;
+      transition: border-color .15s, background .15s;
+    }
+    .suggestion-chip:hover { border-color: var(--teal); background: var(--teal-light); }
+    .suggestion-chip .plus { color: var(--teal); font-weight: 700; }
+
+    /* ── LOGOS STRIP ── */
+    .logos-strip {
+      text-align: center;
+      padding: 52px 0 20px;
+    }
+    .logos-strip p {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--navy);
+      margin-bottom: 28px;
+    }
+    .logos-row {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 24px;
-      margin-top: 28px;
-      padding-top: 20px;
-      border-top: 1px solid var(--border-light);
+      gap: 40px;
+      flex-wrap: wrap;
     }
-    .trust-item { font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
-    .trust-icon { color: var(--teal-primary); font-size: 16px; }
+    .logo-item {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      white-space: nowrap;
+    }
+    .logo-aon      { color: #c8102e; }
+    .logo-vitality { color: #e4003a; background: #e4003a; color: #fff; border-radius: 50%; width: 52px; height: 52px; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; }
+    .logo-arla     { color: #00843d; }
+    .logo-rr       { color: #222; font-size:13px; border: 1px solid #888; border-radius: 3px; padding: 4px 7px; }
+    .logo-moto     { color: #007cc2; }
+    .logo-mc       { display:flex; gap:-6px; align-items:center; }
+    .logo-mc-r     { width:28px; height:28px; border-radius:50%; background:#e32020; }
+    .logo-mc-y     { width:28px; height:28px; border-radius:50%; background:#f79e1b; margin-left:-10px; }
+    .logo-o2       { color: #e60014; border: 2.5px solid #e60014; border-radius: 20px; padding: 4px 12px; font-size:17px; }
+    .logo-nvidia   { color: #76b900; font-size:15px; }
+    .logo-gsk      { color: #f36c21; }
 
     /* ── COOKIE MODAL OVERLAY ── */
     .cookie-overlay {
@@ -292,15 +320,14 @@
       display: flex;
       align-items: flex-end;
       justify-content: center;
-      padding: 0;
     }
     @media (min-width: 600px) {
       .cookie-overlay { align-items: center; }
     }
 
-    /* ── COOKIE MODAL (pixel-faithful replica) ── */
+    /* ── COOKIE MODAL ── */
     .cc-prompt-modal {
-      background: var(--bg-white);
+      background: #fff;
       width: 100%;
       max-width: 480px;
       max-height: 85vh;
@@ -308,21 +335,17 @@
       overflow: hidden;
       display: flex;
       flex-direction: column;
-      box-shadow: var(--shadow-modal);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.18);
       font-size: 14px;
-      position: relative;
     }
     @media (min-width: 600px) {
       .cc-prompt-modal { border-radius: 12px; max-height: 90vh; }
     }
-
     .privacy-prompt-panel-content {
       overflow-y: auto;
       flex: 1;
       padding: 24px 24px 0;
     }
-
-    /* header */
     .ccm-header {
       display: flex;
       align-items: center;
@@ -330,27 +353,19 @@
       margin-bottom: 16px;
     }
     .cc-icon-cookie svg { width: 28px; height: 28px; flex-shrink: 0; }
-    .ccm-header .title {
-      font-size: 18px;
-      font-weight: 700;
-      color: var(--text-primary);
-    }
-
-    /* body text */
+    .ccm-header .title { font-size: 18px; font-weight: 700; color: #222; }
     .cc-description { margin-bottom: 16px; }
     .cc-message-text {
       font-size: 13px;
       line-height: 1.55;
-      color: var(--text-secondary);
+      color: #585858;
       margin-bottom: 10px;
     }
     .cc-message-text:last-child { margin-bottom: 0; }
 
     /* accordions */
     .mt2 { margin-top: 8px; }
-    .cc-accordion {
-      border-top: 1px solid var(--border-light);
-    }
+    .cc-accordion { border-top: 1px solid #e8e8e8; }
     .hide-by-default { display: none; }
     .cc-accordion-header {
       display: flex;
@@ -363,7 +378,7 @@
     .cc-accordion-header-title {
       font-size: 13px;
       font-weight: 600;
-      color: var(--text-primary);
+      color: #222;
       flex: 1;
       line-height: 1.4;
     }
@@ -380,39 +395,29 @@
       position: absolute;
       height: 2px;
       width: 7px;
-      background: var(--text-secondary);
+      background: #585858;
       border-radius: 1px;
       top: 6px;
     }
     .cc-icon-chevron em::before { left: 0; transform: rotate(45deg); transform-origin: right; }
     .cc-icon-chevron em::after  { right: 0; transform: rotate(-45deg); transform-origin: left; }
-
     .cc-accordion-content {
       display: none;
       font-size: 13px;
-      color: var(--text-secondary);
+      color: #585858;
       line-height: 1.5;
       padding-bottom: 14px;
     }
     .cc-accordion-header-toggle:checked ~ .cc-accordion-content { display: block; }
-    .cc-accordion-header-toggle:checked ~ .cc-accordion-header .cc-icon-chevron em::before {
-      transform: rotate(-45deg);
-    }
-    .cc-accordion-header-toggle:checked ~ .cc-accordion-header .cc-icon-chevron em::after {
-      transform: rotate(45deg);
-    }
 
     /* footer */
     .privacy-prompt-panel-footer {
       padding: 16px 24px 20px;
-      border-top: 1px solid var(--border-light);
-      background: var(--bg-white);
+      border-top: 1px solid #e8e8e8;
+      background: #fff;
       flex-shrink: 0;
     }
-    .accept-button-container {
-      display: flex;
-      gap: 12px;
-    }
+    .accept-button-container { display: flex; gap: 12px; }
     .button-container {
       flex: 1;
       background: none;
@@ -423,34 +428,32 @@
     .privacy-prompt-button {
       width: 100%;
       padding: 12px 16px;
-      border-radius: var(--radius-btn);
+      border-radius: 24px;
       font-size: 14px;
       font-weight: 600;
       font-family: inherit;
       cursor: pointer;
-      transition: all .15s;
       display: flex;
       align-items: center;
       justify-content: center;
+      transition: all .15s;
     }
     .options-button {
-      background: var(--bg-white);
-      border: 1.5px solid var(--teal-primary);
-      color: var(--teal-primary);
+      background: #fff;
+      border: 1.5px solid var(--teal);
+      color: var(--teal);
     }
     .options-button:hover { background: var(--teal-light); }
     .ccmgt_accept_button {
-      background: var(--teal-primary);
-      border: 1.5px solid var(--teal-primary);
+      background: var(--teal);
+      border: 1.5px solid var(--teal);
       color: #fff;
     }
     .ccmgt_accept_button:hover { background: var(--teal-hover); }
-
-    /* cookie settings link */
     .ccm_link {
       background: none;
       border: none;
-      color: var(--teal-primary);
+      color: var(--teal);
       font-size: 13px;
       font-weight: 500;
       cursor: pointer;
@@ -461,34 +464,22 @@
       justify-content: center;
     }
     .ccm_link:hover { color: var(--teal-hover); }
-
-    .policy-links {
-      margin-top: 10px;
-    }
+    .policy-links { margin-top: 10px; }
     .footer-note {
       font-size: 11px;
-      color: var(--text-muted);
+      color: #767676;
       text-align: center;
       line-height: 1.45;
       margin-bottom: 8px;
     }
-    .policy-links-row {
-      display: flex;
-      justify-content: center;
-      gap: 4px;
-    }
+    .policy-links-row { display: flex; justify-content: center; gap: 4px; }
     .policy-links-row a {
       font-size: 12px;
-      color: var(--teal-primary);
+      color: var(--teal);
       text-decoration: underline;
       padding: 0 6px;
     }
-    .policy-links-row a:hover { color: var(--teal-hover); }
-    .policy-sep {
-      font-size: 12px;
-      color: var(--border);
-      line-height: 1.8;
-    }
+    .policy-sep { font-size: 12px; color: #d4d4d4; line-height: 1.8; }
 
     /* debug badge */
     #exp-debug {
@@ -504,11 +495,13 @@
       border: 1px solid rgba(255,255,255,0.1);
     }
 
-    @media (max-width: 640px) {
-      .form-row { grid-template-columns: 1fr; }
-      .card { padding: 24px 20px; }
-      .trust-strip { flex-direction: column; gap: 10px; }
-      .nav-links { display: none; }
+    @media (max-width: 860px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .search-card { display: none; }
+    }
+    @media (max-width: 600px) {
+      .page-body { padding: 20px 16px 40px; }
+      .nav { padding: 0 16px; }
     }
   </style>
 </head>
@@ -516,114 +509,81 @@
 
   <!-- ── NAV ── -->
   <nav class="nav">
-    <div class="nav-inner">
-      <a class="nav-logo" href="#">total<span>jobs</span></a>
-      <ul class="nav-links">
-        <li><a href="#">Find a job</a></li>
-        <li><a href="#">Career advice</a></li>
-        <li><a href="#">Salary checker</a></li>
-        <li><a href="#">Employers</a></li>
-      </ul>
-      <div class="nav-actions">
-        <button class="btn-nav-ghost">Sign in</button>
-        <button class="btn-nav-solid">Register</button>
-      </div>
-    </div>
+    <a class="nav-logo" href="#">
+      <!-- TotalJobs logo icon approximation -->
+      <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="40" height="40" rx="8" fill="#e8f4f8"/>
+        <circle cx="14" cy="20" r="7" fill="#4db8cc"/>
+        <circle cx="14" cy="20" r="4" fill="#fff"/>
+        <circle cx="26" cy="14" r="5" fill="#2e7da6"/>
+        <circle cx="28" cy="27" r="4" fill="#6ec6d8"/>
+      </svg>
+      <span class="nav-logo-text">totaljobs</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#">Find a job</a></li>
+      <li><a href="#">Post a job</a></li>
+    </ul>
+    <button class="btn-signup">Sign up</button>
   </nav>
 
-  <!-- ── PROGRESS ── -->
-  <div class="progress-wrap">
-    <div class="progress-inner">
-      <div class="progress-steps">
-        <div class="step done">
-          <div class="step-circle">✓</div>
-          <div class="step-label">Account</div>
-        </div>
-        <div class="step active">
-          <div class="step-circle">2</div>
-          <div class="step-label">Your search</div>
-        </div>
-        <div class="step">
-          <div class="step-circle">3</div>
-          <div class="step-label">Preferences</div>
-        </div>
-        <div class="step">
-          <div class="step-circle">4</div>
-          <div class="step-label">Your CV</div>
+  <!-- ── PAGE BODY ── -->
+  <div class="page-body">
+
+    <div class="stat-line"><strong>+110,000</strong> Jobs available in Totaljobs</div>
+
+    <h1 class="hero-heading">Find the <em>right job</em>, faster</h1>
+
+    <div class="hero-grid">
+
+      <!-- Left: gradient card -->
+      <div class="gradient-card">
+        <div class="gradient-card-title">Fast-track your job search</div>
+        <div class="gradient-card-sub">Upload your CV to get personalised matches, while staying in control of your data</div>
+        <div class="gradient-card-actions">
+          <button class="btn-upload-cv">Upload CV</button>
+          <button class="btn-login">Login</button>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- ── MAIN ── -->
-  <main class="main">
-    <div class="card">
-      <div class="card-eyebrow">Step 2 of 4</div>
-      <h1 class="card-title">Tell us what you're looking for</h1>
-      <p class="card-subtitle">We'll use this to personalise your job recommendations and set up tailored job alerts.</p>
-
-      <form onsubmit="return false;">
-        <div class="form-group">
-          <label class="form-label" for="job-title">What kind of role are you looking for?</label>
-          <input class="form-control" id="job-title" type="text" placeholder="e.g. Software Engineer, Marketing Manager">
+      <!-- Right: no-CV search card -->
+      <div class="search-card">
+        <div class="spinner"></div>
+        <div class="search-card-title">No CV? Tell us what you're looking for</div>
+        <textarea class="search-textarea" placeholder="e.g. Warehouse operative, London"></textarea>
+        <div class="search-card-footer">
+          <button class="btn-next">Next</button>
         </div>
-
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="location">Location</label>
-            <input class="form-control" id="location" type="text" placeholder="City or postcode">
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="radius">Distance</label>
-            <select class="form-control" id="radius">
-              <option>Within 5 miles</option>
-              <option>Within 10 miles</option>
-              <option selected>Within 20 miles</option>
-              <option>Within 30 miles</option>
-              <option>Within 50 miles</option>
-              <option>UK wide</option>
-            </select>
+        <div class="suggestions-section">
+          <div class="suggestions-label">Suggestions</div>
+          <div class="suggestions-chips">
+            <div class="suggestion-chip"><span class="plus">+</span> Warehouse Operative</div>
+            <div class="suggestion-chip"><span class="plus">+</span> Greater London</div>
           </div>
         </div>
+      </div>
 
-        <div class="form-group">
-          <label class="form-label">Job type</label>
-          <div class="chips">
-            <div class="chip selected" onclick="this.classList.toggle('selected')">Full-time</div>
-            <div class="chip" onclick="this.classList.toggle('selected')">Part-time</div>
-            <div class="chip" onclick="this.classList.toggle('selected')">Contract</div>
-            <div class="chip" onclick="this.classList.toggle('selected')">Temporary</div>
-            <div class="chip" onclick="this.classList.toggle('selected')">Remote</div>
-          </div>
-        </div>
+    </div><!-- end hero-grid -->
 
-        <div class="form-group">
-          <label class="form-label" for="salary">Minimum salary (optional)</label>
-          <select class="form-control" id="salary">
-            <option>No preference</option>
-            <option>£20,000+</option>
-            <option>£25,000+</option>
-            <option>£30,000+</option>
-            <option>£40,000+</option>
-            <option>£50,000+</option>
-            <option>£60,000+</option>
-            <option>£70,000+</option>
-            <option>£80,000+</option>
-          </select>
-          <div class="form-hint">Annual salary before tax</div>
-        </div>
-
-        <button class="btn-continue" type="submit">Continue</button>
-        <a class="btn-skip">Skip this step</a>
-      </form>
-
-      <div class="trust-strip">
-        <div class="trust-item"><span class="trust-icon">🔒</span> Your data is safe</div>
-        <div class="trust-item"><span class="trust-icon">✓</span> 250,000+ live jobs</div>
-        <div class="trust-item"><span class="trust-icon">✉</span> Unsubscribe anytime</div>
+    <!-- Logos strip -->
+    <div class="logos-strip">
+      <p>The world's leading companies discover talent like you on Totaljobs</p>
+      <div class="logos-row">
+        <span class="logo-item logo-aon">AON</span>
+        <div class="logo-vitality">V</div>
+        <span class="logo-item logo-arla">Arla</span>
+        <span class="logo-item logo-rr">RR</span>
+        <span class="logo-item logo-moto">Ⓜ</span>
+        <span class="logo-mc">
+          <span class="logo-mc-r"></span><span class="logo-mc-y"></span>
+        </span>
+        <span class="logo-item logo-o2">O₂</span>
+        <span class="logo-item logo-nvidia">NVIDIA.</span>
+        <span class="logo-item logo-gsk">GSK</span>
       </div>
     </div>
-  </main>
+
+  </div><!-- end page-body -->
 
   <!-- ── COOKIE CONSENT MODAL ── -->
   <div class="cookie-overlay" id="cookieOverlay">
@@ -646,37 +606,37 @@
           <p class="cc-message-text">Some cookies are essential for the operation of our website. If you would prefer us not to use the non-essential cookies, click "Just necessary", but please be aware that this may impact your experience of our site and the services we are able to offer. Click "Accept" if you're happy for us to place these cookies. You can change your mind at any time.</p>
         </div>
 
-        <!-- ACCORDIONS — removed in treatment via JS -->
+        <!-- ACCORDIONS — removed from DOM in treatment -->
         <div class="mt2" id="accordionBlock">
-          <div class="cc-accordion cc-accordion-cc-ec-stk-1 stack-enable">
+          <div class="cc-accordion">
             <input type="checkbox" name="cc-ec-stk-1" id="cc-ec-stk-1" class="hide-by-default cc-accordion-header-toggle">
             <label for="cc-ec-stk-1" class="cc-accordion-header">
               <div class="cc-accordion-header-title">Store and / or access information on a device</div>
-              <span class="cc-accordion-reveal-button cc-icon-chevron rebrand"><em></em></span>
+              <span class="cc-icon-chevron rebrand"><em></em></span>
             </label>
             <div class="cc-accordion-content">Cookies, device identifiers, or other information can be stored or accessed on your device for the purposes presented to you.</div>
           </div>
-          <div class="cc-accordion cc-accordion-cc-ec-stk-2 stack-enable">
+          <div class="cc-accordion">
             <input type="checkbox" name="cc-ec-stk-2" id="cc-ec-stk-2" class="hide-by-default cc-accordion-header-toggle">
             <label for="cc-ec-stk-2" class="cc-accordion-header">
               <div class="cc-accordion-header-title">Personalised ads and content, ad and content measurement, audience insights and product development</div>
-              <span class="cc-accordion-reveal-button cc-icon-chevron rebrand"><em></em></span>
+              <span class="cc-icon-chevron rebrand"><em></em></span>
             </label>
             <div class="cc-accordion-content">Ads and content can be personalised based on a profile. More data can be added to better personalise ads and content. The performance of ads and content can be measured. Insights about audiences who have viewed the ads and content can be extracted. Data can be used to build or improve user experience, systems and software.</div>
           </div>
-          <div class="cc-accordion cc-accordion-cc-ec-stk-3 stack-enable">
+          <div class="cc-accordion">
             <input type="checkbox" name="cc-ec-stk-3" id="cc-ec-stk-3" class="hide-by-default cc-accordion-header-toggle">
             <label for="cc-ec-stk-3" class="cc-accordion-header">
               <div class="cc-accordion-header-title">Display third-party content (social networks, videos)</div>
-              <span class="cc-accordion-reveal-button cc-icon-chevron rebrand"><em></em></span>
+              <span class="cc-icon-chevron rebrand"><em></em></span>
             </label>
             <div class="cc-accordion-content">Content from social networks and embedded content from third-party providers can be displayed.</div>
           </div>
-          <div class="cc-accordion cc-accordion-cc-ec-stk-4 stack-enable">
+          <div class="cc-accordion">
             <input type="checkbox" name="cc-ec-stk-4" id="cc-ec-stk-4" class="hide-by-default cc-accordion-header-toggle">
             <label for="cc-ec-stk-4" class="cc-accordion-header">
               <div class="cc-accordion-header-title">Identifiers derived from authentications</div>
-              <span class="cc-accordion-reveal-button cc-icon-chevron rebrand"><em></em></span>
+              <span class="cc-icon-chevron rebrand"><em></em></span>
             </label>
             <div class="cc-accordion-content">If an identifier is created based on authentication data, such as contact details associated with online accounts you have set up on websites or apps (e.g. email address, phone number) or customer identifiers (e.g. an identifier provided by your telecommunications provider), then this identifier can be used to recognize you across websites, apps and devices if you are logged in with the same contact details.</div>
           </div>
@@ -687,19 +647,19 @@
       <div id="fixedfooter" class="privacy-prompt-panel-footer rebrand">
         <div class="accept-button-container">
           <button class="button-container" style="margin-top:8px" onclick="dismissCookie()">
-            <div id="ccmgt_explicit_preferences" class="privacy-prompt-button options-button rebrand">
+            <div class="privacy-prompt-button options-button rebrand">
               <div style="display:inline-block">Just Necessary</div>
             </div>
           </button>
           <button class="button-container" style="margin-top:8px" onclick="dismissCookie()">
-            <div id="ccmgt_explicit_accept" class="privacy-prompt-button ccmgt_accept_button rebrand">
+            <div class="privacy-prompt-button ccmgt_accept_button rebrand">
               <div style="display:inline-block">Accept All</div>
             </div>
           </button>
         </div>
         <div style="display:flex;justify-content:center;margin-bottom:-12px">
           <button class="button-container" style="margin-top:8px">
-            <div id="cookieSettings" class="privacy-prompt-button ccm_link rebrand">
+            <div class="privacy-prompt-button ccm_link rebrand">
               <div style="display:inline-block">Cookie Settings</div>
             </div>
           </button>
@@ -741,11 +701,9 @@
         document.getElementById('exp-debug').textContent = 'Variant: ' + v;
 
         if (v === 'treatment') {
-          // Remove accordion block entirely from the DOM — not hidden, fully absent
-          var accordionBlock = document.getElementById('accordionBlock');
-          if (accordionBlock) {
-            accordionBlock.parentNode.removeChild(accordionBlock);
-          }
+          // Remove accordion block entirely from the DOM — not CSS hidden, fully absent
+          var block = document.getElementById('accordionBlock');
+          if (block) block.parentNode.removeChild(block);
         }
 
         amplitude.track('Experiment Viewed', {
