@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>totaljobs — Set up your job search</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Amplitude Browser SDK 2 -->
+  <script src="https://cdn.amplitude.com/script/e3ba67e2674d5fabbdcbd8f2cddcbf2a.js"></script>
+  <!-- Amplitude Experiment SDK -->
+  <script src="https://unpkg.com/@amplitude/experiment-js-client@1.15.5/dist/experiment.umd.js"></script>
+
+  <style>
+    :root {
+      --teal-primary: #006672;
+      --teal-hover:   #004d57;
+      --teal-light:   #e6f4f6;
+      --teal-mid:     #cce8eb;
+      --text-primary: #222222;
+      --text-secondary: #585858;
+      --text-muted:   #767676;
+      --border:       #d4d4d4;
+      --border-light: #e8e8e8;
+      --bg-page:      #f5f5f5;
+      --bg-white:     #ffffff;
+      --shadow-modal: 0 4px 24px rgba(0,0,0,0.18);
+      --radius-btn:   24px;
+      --radius-card:  8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 16px;
+      color: var(--text-primary);
+      background: var(--bg-page);
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    .nav {
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border-light);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      gap: 32px;
+    }
+    .nav-logo {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--teal-primary);
+      text-decoration: none;
+      letter-spacing: -0.5px;
+      flex-shrink: 0;
+    }
+    .nav-logo span { color: var(--text-primary); }
+    .nav-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+      flex: 1;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      transition: color .15s;
+    }
+    .nav-links a:hover { color: var(--teal-primary); }
+    .nav-actions { display: flex; gap: 12px; align-items: center; }
+    .btn-nav-ghost {
+      background: none;
+      border: 1.5px solid var(--teal-primary);
+      color: var(--teal-primary);
+      border-radius: var(--radius-btn);
+      padding: 8px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+    }
+    .btn-nav-ghost:hover { background: var(--teal-light); }
+    .btn-nav-solid {
+      background: var(--teal-primary);
+      border: 1.5px solid var(--teal-primary);
+      color: #fff;
+      border-radius: var(--radius-btn);
+      padding: 8px 20px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .btn-nav-solid:hover { background: var(--teal-hover); }
+
+    /* ── PROGRESS BAR ── */
+    .progress-wrap {
+      background: var(--bg-white);
+      border-bottom: 1px solid var(--border-light);
+    }
+    .progress-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 20px 24px 0;
+    }
+    .progress-steps {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 20px;
+    }
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      flex: 1;
+      position: relative;
+    }
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 14px;
+      left: 50%;
+      width: 100%;
+      height: 2px;
+      background: var(--border);
+    }
+    .step.active:not(:last-child)::after,
+    .step.done:not(:last-child)::after { background: var(--teal-primary); }
+    .step-circle {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--border);
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      z-index: 1;
+    }
+    .step.active .step-circle { background: var(--teal-primary); color: #fff; }
+    .step.done .step-circle { background: var(--teal-primary); color: #fff; }
+    .step-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .step.active .step-label { color: var(--teal-primary); font-weight: 600; }
+
+    /* ── MAIN CONTENT ── */
+    .main {
+      max-width: 680px;
+      margin: 40px auto;
+      padding: 0 24px;
+    }
+    .card {
+      background: var(--bg-white);
+      border-radius: var(--radius-card);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      padding: 40px;
+    }
+    .card-eyebrow {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--teal-primary);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 10px;
+    }
+    .card-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 8px;
+      line-height: 1.25;
+    }
+    .card-subtitle {
+      font-size: 15px;
+      color: var(--text-secondary);
+      margin-bottom: 32px;
+      line-height: 1.5;
+    }
+
+    /* form */
+    .form-group { margin-bottom: 20px; }
+    .form-label {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 6px;
+    }
+    .form-control {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      font-size: 15px;
+      font-family: inherit;
+      color: var(--text-primary);
+      outline: none;
+      transition: border-color .15s;
+      background: var(--bg-white);
+    }
+    .form-control:focus { border-color: var(--teal-primary); }
+    .form-control::placeholder { color: var(--text-muted); }
+    .form-hint {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .chip {
+      padding: 6px 14px;
+      border-radius: 20px;
+      border: 1.5px solid var(--border);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all .15s;
+      background: var(--bg-white);
+      color: var(--text-secondary);
+    }
+    .chip:hover, .chip.selected {
+      border-color: var(--teal-primary);
+      background: var(--teal-light);
+      color: var(--teal-primary);
+      font-weight: 500;
+    }
+
+    .btn-continue {
+      width: 100%;
+      padding: 14px;
+      background: var(--teal-primary);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-btn);
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background .15s;
+    }
+    .btn-continue:hover { background: var(--teal-hover); }
+    .btn-skip {
+      display: block;
+      text-align: center;
+      margin-top: 14px;
+      font-size: 14px;
+      color: var(--text-muted);
+      cursor: pointer;
+      text-decoration: underline;
+    }
+    .btn-skip:hover { color: var(--teal-primary); }
+
+    .trust-strip {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 28px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-light);
+    }
+    .trust-item { font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+    .trust-icon { color: var(--teal-primary); font-size: 16px; }
+
+    /* ── COOKIE MODAL OVERLAY ── */
+    .cookie-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      z-index: 900;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      padding: 0;
+    }
+    @media (min-width: 600px) {
+      .cookie-overlay { align-items: center; }
+    }
+
+    /* ── COOKIE MODAL (pixel-faithful replica) ── */
+    .cc-prompt-modal {
+      background: var(--bg-white);
+      width: 100%;
+      max-width: 480px;
+      max-height: 85vh;
+      border-radius: 12px 12px 0 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-modal);
+      font-size: 14px;
+      position: relative;
+    }
+    @media (min-width: 600px) {
+      .cc-prompt-modal { border-radius: 12px; max-height: 90vh; }
+    }
+
+    .privacy-prompt-panel-content {
+      overflow-y: auto;
+      flex: 1;
+      padding: 24px 24px 0;
+    }
+
+    /* header */
+    .ccm-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .cc-icon-cookie svg { width: 28px; height: 28px; flex-shrink: 0; }
+    .ccm-header .title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* body text */
+    .cc-description { margin-bottom: 16px; }
+    .cc-message-text {
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--text-secondary);
+      margin-bottom: 10px;
+    }
+    .cc-message-text:last-child { margin-bottom: 0; }
+
+    /* accordions */
+    .mt2 { margin-top: 8px; }
+    .cc-accordion {
+      border-top: 1px solid var(--border-light);
+    }
+    .hide-by-default { display: none; }
+    .cc-accordion-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      cursor: pointer;
+      gap: 8px;
+    }
+    .cc-accordion-header-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+      flex: 1;
+      line-height: 1.4;
+    }
+    .cc-icon-chevron em {
+      display: block;
+      width: 14px;
+      height: 14px;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .cc-icon-chevron em::before,
+    .cc-icon-chevron em::after {
+      content: '';
+      position: absolute;
+      height: 2px;
+      width: 7px;
+      background: var(--text-secondary);
+      border-radius: 1px;
+      top: 6px;
+    }
+    .cc-icon-chevron em::before { left: 0; transform: rotate(45deg); transform-origin: right; }
+    .cc-icon-chevron em::after  { right: 0; transform: rotate(-45deg); transform-origin: left; }
+
+    .cc-accordion-content {
+      display: none;
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      padding-bottom: 14px;
+    }
+    .cc-accordion-header-toggle:checked ~ .cc-accordion-content { display: block; }
+    .cc-accordion-header-toggle:checked ~ .cc-accordion-header .cc-icon-chevron em::before {
+      transform: rotate(-45deg);
+    }
+    .cc-accordion-header-toggle:checked ~ .cc-accordion-header .cc-icon-chevron em::after {
+      transform: rotate(45deg);
+    }
+
+    /* footer */
+    .privacy-prompt-panel-footer {
+      padding: 16px 24px 20px;
+      border-top: 1px solid var(--border-light);
+      background: var(--bg-white);
+      flex-shrink: 0;
+    }
+    .accept-button-container {
+      display: flex;
+      gap: 12px;
+    }
+    .button-container {
+      flex: 1;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+    }
+    .privacy-prompt-button {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: var(--radius-btn);
+      font-size: 14px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all .15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .options-button {
+      background: var(--bg-white);
+      border: 1.5px solid var(--teal-primary);
+      color: var(--teal-primary);
+    }
+    .options-button:hover { background: var(--teal-light); }
+    .ccmgt_accept_button {
+      background: var(--teal-primary);
+      border: 1.5px solid var(--teal-primary);
+      color: #fff;
+    }
+    .ccmgt_accept_button:hover { background: var(--teal-hover); }
+
+    /* cookie settings link */
+    .ccm_link {
+      background: none;
+      border: none;
+      color: var(--teal-primary);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 8px 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ccm_link:hover { color: var(--teal-hover); }
+
+    .policy-links {
+      margin-top: 10px;
+    }
+    .footer-note {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: center;
+      line-height: 1.45;
+      margin-bottom: 8px;
+    }
+    .policy-links-row {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+    }
+    .policy-links-row a {
+      font-size: 12px;
+      color: var(--teal-primary);
+      text-decoration: underline;
+      padding: 0 6px;
+    }
+    .policy-links-row a:hover { color: var(--teal-hover); }
+    .policy-sep {
+      font-size: 12px;
+      color: var(--border);
+      line-height: 1.8;
+    }
+
+    /* debug badge */
+    #exp-debug {
+      position: fixed;
+      bottom: 14px;
+      right: 14px;
+      background: rgba(0,0,0,0.75);
+      color: #aaa;
+      font: 11px/1 monospace;
+      padding: 8px 12px;
+      border-radius: 6px;
+      z-index: 9999;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    @media (max-width: 640px) {
+      .form-row { grid-template-columns: 1fr; }
+      .card { padding: 24px 20px; }
+      .trust-strip { flex-direction: column; gap: 10px; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ── NAV ── -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="nav-logo" href="#">total<span>jobs</span></a>
+      <ul class="nav-links">
+        <li><a href="#">Find a job</a></li>
+        <li><a href="#">Career advice</a></li>
+        <li><a href="#">Salary checker</a></li>
+        <li><a href="#">Employers</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="btn-nav-ghost">Sign in</button>
+        <button class="btn-nav-solid">Register</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ── PROGRESS ── -->
+  <div class="progress-wrap">
+    <div class="progress-inner">
+      <div class="progress-steps">
+        <div class="step done">
+          <div class="step-circle">✓</div>
+          <div class="step-label">Account</div>
+        </div>
+        <div class="step active">
+          <div class="step-circle">2</div>
+          <div class="step-label">Your search</div>
+        </div>
+        <div class="step">
+          <div class="step-circle">3</div>
+          <div class="step-label">Preferences</div>
+        </div>
+        <div class="step">
+          <div class="step-circle">4</div>
+          <div class="step-label">Your CV</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MAIN ── -->
+  <main class="main">
+    <div class="card">
+      <div class="card-eyebrow">Step 2 of 4</div>
+      <h1 class="card-title">Tell us what you're looking for</h1>
+      <p class="card-subtitle">We'll use this to personalise your job recommendations and set up tailored job alerts.</p>
+
+      <form onsubmit="return false;">
+        <div class="form-group">
+          <label class="form-label" for="job-title">What kind of role are you looking for?</label>
+          <input class="form-control" id="job-title" type="text" placeholder="e.g. Software Engineer, Marketing Manager">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="location">Location</label>
+            <input class="form-control" id="location" type="text" placeholder="City or postcode">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="radius">Distance</label>
+            <select class="form-control" id="radius">
+              <option>Within 5 miles</option>
+              <option>Within 10 miles</option>
+              <option selected>Within 20 miles</option>
+              <option>Within 30 miles</option>
+              <option>Within 50 miles</option>
+              <option>UK wide</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Job type</label>
+          <div class="chips">
+            <div class="chip selected" onclick="this.classList.toggle('selected')">Full-time</div>
+            <div class="chip" onclick="this.classList.toggle('selected')">Part-time</div>
+            <div class="chip" onclick="this.classList.toggle('selected')">Contract</div>
+            <div class="chip" onclick="this.classList.toggle('selected')">Temporary</div>
+            <div class="chip" onclick="this.classList.toggle('selected')">Remote</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="salary">Minimum salary (optional)</label>
+          <select class="form-control" id="salary">
+            <option>No preference</option>
+            <option>£20,000+</option>
+            <option>£25,000+</option>
+            <option>£30,000+</option>
+            <option>£40,000+</option>
+            <option>£50,000+</option>
+            <option>£60,000+</option>
+            <option>£70,000+</option>
+            <option>£80,000+</option>
+          </select>
+          <div class="form-hint">Annual salary before tax</div>
+        </div>
+
+        <button class="btn-continue" type="submit">Continue</button>
+        <a class="btn-skip">Skip this step</a>
+      </form>
+
+      <div class="trust-strip">
+        <div class="trust-item"><span class="trust-icon">🔒</span> Your data is safe</div>
+        <div class="trust-item"><span class="trust-icon">✓</span> 250,000+ live jobs</div>
+        <div class="trust-item"><span class="trust-icon">✉</span> Unsubscribe anytime</div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ── COOKIE CONSENT MODAL ── -->
+  <div class="cookie-overlay" id="cookieOverlay">
+    <section class="cc-prompt-modal rebrand" id="ccModal">
+      <div id="scrollableContent" class="privacy-prompt-panel-content">
+
+        <div class="ccm-header ccm-row">
+          <div class="cc-icon-cookie ccm-col">
+            <em>
+              <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path d="M7.988.017a.824.824 0 01.992.808 2.653 2.653 0 002.653 2.653c.405 0 .804-.097 1.166-.282a1.02 1.02 0 011.376.453A2.633 2.633 0 0016.53 5.11c.37 0 .734-.08 1.072-.237a1.02 1.02 0 011.334.469A9.879 9.879 0 0120 9.803 10 10 0 117.988.017zm-.2 1.304l-.049.012a8.775 8.775 0 1011.037 8.47c0-1.357-.32-2.697-.933-3.91l.081.172-.026.012c-.29.113-.593.19-.901.228l-.233.022-.234.008a3.858 3.858 0 01-3.246-1.778l-.11-.186-.05.024c-.391.169-.81.27-1.235.299l-.256.008A3.878 3.878 0 017.8 1.415l-.012-.094zm4.661 13.38l.103.007a.816.816 0 11-.205 0l.102-.006zm-4.897-3.06a2.245 2.245 0 110 4.49 2.245 2.245 0 010-4.49zm0 1.224a1.02 1.02 0 100 2.04 1.02 1.02 0 000-2.04zm4.897-2.857a1.429 1.429 0 110 2.857 1.429 1.429 0 010-2.857zm0 1.224a.204.204 0 100 .409.204.204 0 000-.409zM3.47 9.804l.103.006a.816.816 0 11-.205 0l.102-.006zM6.735 5.11a2.245 2.245 0 110 4.49 2.245 2.245 0 010-4.49zm6.53 2.245l.103.006a.816.816 0 11-.205 0l.103-.006zm-6.53-1.02a1.02 1.02 0 100 2.04 1.02 1.02 0 000-2.04z" fill="#222222" fill-rule="evenodd"/>
+              </svg>
+            </em>
+          </div>
+          <h1 class="ccm-col title">We use cookies</h1>
+        </div>
+
+        <div class="cc-description">
+          <p class="cc-message-text">We use cookies to operate our website, measure how people use our services to help us improve them, enrich usage profiles and personalise the content displayed to you. We also share information about your use of our site with our social media, advertising, and analytics partners, who may combine it with other information, to show you relevant ads on other websites, and to measure the performance of our advertising.</p>
+          <p class="cc-message-text">Some cookies are essential for the operation of our website. If you would prefer us not to use the non-essential cookies, click "Just necessary", but please be aware that this may impact your experience of our site and the services we are able to offer. Click "Accept" if you're happy for us to place these cookies. You can change your mind at any time.</p>
+        </div>
+
+        <!-- ACCORDIONS — removed in treatment via JS -->
+        <div class="mt2" id="accordionBlock">
+          <div class="cc-accordion cc-accordion-cc-ec-stk-1 stack-enable">
+            <input type="checkbox" name="cc-ec-stk-1" id="cc-ec-stk-1" class="hide-by-default cc-accordion-header-toggle">
+            <label for="cc-ec-stk-1" class="cc-accordion-header">
+              <div class="cc-accordion-header-title">Store and / or access information on a device</div>
+              <span class="cc-accordion-reveal-button cc-icon-chevron rebrand"><em></em></span>
+            </label>
+            <div class="cc-accordion-content">Cookies, device identifiers, or other information can be stored or accessed on your device for the purposes presented to you.</div>
+          </div>
+          <div class="cc-accordion cc-accordion-cc-ec-stk-2 stack-enable">
+            <input type="checkbox" name="cc-ec-stk-2" id="cc-ec-stk-2" class="hide-by-default cc-accordion-header-toggle">
+            <label for="cc-ec-stk-2" class="cc-accordion-header">
+              <div class="cc-accordion-header-title">Personalised ads and content, ad and content measurement, audience insights and product development</div>
+              <span class="cc-accordion-reveal-button cc-icon-chevron rebrand"><em></em></span>
+            </label>
+            <div class="cc-accordion-content">Ads and content can be personalised based on a profile. More data can be added to better personalise ads and content. The performance of ads and content can be measured. Insights about audiences who have viewed the ads and content can be extracted. Data can be used to build or improve user experience, systems and software.</div>
+          </div>
+          <div class="cc-accordion cc-accordion-cc-ec-stk-3 stack-enable">
+            <input type="checkbox" name="cc-ec-stk-3" id="cc-ec-stk-3" class="hide-by-default cc-accordion-header-toggle">
+            <label for="cc-ec-stk-3" class="cc-accordion-header">
+              <div class="cc-accordion-header-title">Display third-party content (social networks, videos)</div>
+              <span class="cc-accordion-reveal-button cc-icon-chevron rebrand"><em></em></span>
+            </label>
+            <div class="cc-accordion-content">Content from social networks and embedded content from third-party providers can be displayed.</div>
+          </div>
+          <div class="cc-accordion cc-accordion-cc-ec-stk-4 stack-enable">
+            <input type="checkbox" name="cc-ec-stk-4" id="cc-ec-stk-4" class="hide-by-default cc-accordion-header-toggle">
+            <label for="cc-ec-stk-4" class="cc-accordion-header">
+              <div class="cc-accordion-header-title">Identifiers derived from authentications</div>
+              <span class="cc-accordion-reveal-button cc-icon-chevron rebrand"><em></em></span>
+            </label>
+            <div class="cc-accordion-content">If an identifier is created based on authentication data, such as contact details associated with online accounts you have set up on websites or apps (e.g. email address, phone number) or customer identifiers (e.g. an identifier provided by your telecommunications provider), then this identifier can be used to recognize you across websites, apps and devices if you are logged in with the same contact details.</div>
+          </div>
+        </div>
+
+      </div><!-- end scrollableContent -->
+
+      <div id="fixedfooter" class="privacy-prompt-panel-footer rebrand">
+        <div class="accept-button-container">
+          <button class="button-container" style="margin-top:8px" onclick="dismissCookie()">
+            <div id="ccmgt_explicit_preferences" class="privacy-prompt-button options-button rebrand">
+              <div style="display:inline-block">Just Necessary</div>
+            </div>
+          </button>
+          <button class="button-container" style="margin-top:8px" onclick="dismissCookie()">
+            <div id="ccmgt_explicit_accept" class="privacy-prompt-button ccmgt_accept_button rebrand">
+              <div style="display:inline-block">Accept All</div>
+            </div>
+          </button>
+        </div>
+        <div style="display:flex;justify-content:center;margin-bottom:-12px">
+          <button class="button-container" style="margin-top:8px">
+            <div id="cookieSettings" class="privacy-prompt-button ccm_link rebrand">
+              <div style="display:inline-block">Cookie Settings</div>
+            </div>
+          </button>
+        </div>
+        <div class="policy-links">
+          <div class="footer-note">You can also exercise your right to object to data processing based on legitimate interests under "Privacy Policy".</div>
+          <div class="policy-links-row">
+            <a href="/about/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+            <span class="policy-sep">|</span>
+            <a href="/about/cookies" target="_blank" rel="noopener noreferrer">Cookie policy</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Debug badge -->
+  <div id="exp-debug">Loading…</div>
+
+  <script>
+    function dismissCookie() {
+      document.getElementById('cookieOverlay').style.display = 'none';
+    }
+
+    // Amplitude init
+    amplitude.init('e3ba67e2674d5fabbdcbd8f2cddcbf2a', {
+      fetchRemoteConfig: true,
+      autocapture: true
+    });
+
+    // A/B test
+    (async function () {
+      try {
+        const experiment = Experiment.initializeWithAmplitudeAnalytics('client-FZXDY7CjmseQr3M4Wjrciuxsz957faW2');
+        await experiment.fetch();
+        const variant = experiment.variant('template-agent');
+        const v = variant.value || 'control';
+
+        document.getElementById('exp-debug').textContent = 'Variant: ' + v;
+
+        if (v === 'treatment') {
+          // Remove accordion block entirely from the DOM — not hidden, fully absent
+          var accordionBlock = document.getElementById('accordionBlock');
+          if (accordionBlock) {
+            accordionBlock.parentNode.removeChild(accordionBlock);
+          }
+        }
+
+        amplitude.track('Experiment Viewed', {
+          experiment_key: 'template-agent',
+          variant: v
+        });
+      } catch (e) {
+        console.warn('Experiment error:', e);
+        document.getElementById('exp-debug').textContent = 'Experiment: error';
+      }
+    })();
+  </script>
+
+</body>
+</html>
