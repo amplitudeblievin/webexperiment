@@ -9,8 +9,41 @@
 
   <!-- Amplitude Browser SDK 2 -->
   <script src="https://cdn.amplitude.com/script/e3ba67e2674d5fabbdcbd8f2cddcbf2a.js"></script>
-  <!-- Amplitude Experiment SDK -->
-  <script src="https://unpkg.com/@amplitude/experiment-js-client@1.15.5/dist/experiment.umd.js"></script>
+  <!-- Amplitude WEB Experiment SDK -->
+  <script src="https://cdn.amplitude.com/script/e3ba67e2674d5fabbdcbd8f2cddcbf2a.experiment.js"></script>
+  <script>
+    (function (d, h) {
+      // TODO: Replace API_KEY with your API key.
+      var apiKey = "e3ba67e2674d5fabbdcbd8f2cddcbf2a";
+      // TODO: Set a timeout in milliseconds for the anti-flicker.
+      var timeout = 1000;
+      // Hides the page and loads the script. Shows page if script fails to load,
+      // otherwise the script shows the page.
+      var id = "amp-exp-css";
+      try {
+        if (!d.getElementById(id)) {
+          var st = d.createElement("style");
+          st.id = id;
+          st.innerText =
+            "* { visibility: hidden !important; background-image: none !important; }";
+          h.appendChild(st);
+          window.setTimeout(function () {
+            st.remove();
+          }, timeout);
+          var sc = d.createElement("script");
+          sc.src =
+            "https://cdn.amplitude.com/script/" + apiKey + ".experiment.js";
+          sc.async = true;
+          sc.onerror = function () {
+            st.remove();
+          };
+          h.insertBefore(sc, d.currentScript || h.lastChild);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    })(document, document.head);
+  </script>
 
   <style>
     :root {
@@ -679,7 +712,7 @@
   <!-- Debug badge -->
   <div id="exp-debug">Loading…</div>
 
-  <script>
+  <!-- <script>
     function dismissCookie() {
       document.getElementById('cookieOverlay').style.display = 'none';
     }
@@ -715,7 +748,7 @@
         document.getElementById('exp-debug').textContent = 'Experiment: error';
       }
     })();
-  </script>
+  </script> -->
 
 </body>
 </html>
